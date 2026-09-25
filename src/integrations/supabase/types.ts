@@ -14,16 +14,136 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      entries: {
+        Row: {
+          created_at: string
+          day: string
+          deliveries: number
+          extra_income: number
+          fuel: number
+          id: string
+          maintenance: number
+          notes: string
+          other_expenses: number
+          price: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          day?: string
+          deliveries?: number
+          extra_income?: number
+          fuel?: number
+          id?: string
+          maintenance?: number
+          notes?: string
+          other_expenses?: number
+          price?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          day?: string
+          deliveries?: number
+          extra_income?: number
+          fuel?: number
+          id?: string
+          maintenance?: number
+          notes?: string
+          other_expenses?: number
+          price?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          active: boolean
+          created_at: string
+          email: string
+          id: string
+          name: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          email?: string
+          id: string
+          name?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      reports: {
+        Row: {
+          created_at: string
+          id: string
+          period_end: string
+          period_start: string
+          report_type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          period_end: string
+          period_start: string
+          report_type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          period_end?: string
+          period_start?: string
+          report_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_admin: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "entregador" | "adm" | "adm_principal"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +270,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["entregador", "adm", "adm_principal"],
+    },
   },
 } as const
