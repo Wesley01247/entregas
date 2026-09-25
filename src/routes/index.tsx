@@ -1,24 +1,43 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { useAuth } from "@/hooks/useAuth";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Entregador — Meu financeiro" },
+      {
+        name: "description",
+        content:
+          "Registre entregas, ganhos e despesas do dia e acompanhe seu resultado em tempo real.",
+      },
+      { property: "og:title", content: "Entregador — Meu financeiro" },
+      {
+        property: "og:description",
+        content: "Registre entregas, ganhos e despesas e acompanhe seu resultado.",
+      },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
+  const { loading, session, isAdmin } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (loading) return;
+    if (!session) void navigate({ to: "/auth", replace: true });
+    else void navigate({ to: isAdmin ? "/adm" : "/painel", replace: true });
+  }, [loading, session, isAdmin, navigate]);
+
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <main className="flex min-h-screen items-center justify-center px-6">
+      <div className="glass-card rise-in px-8 py-10 text-center">
+        <h1 className="text-gradient text-3xl font-extrabold uppercase">Entregador</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Meu financeiro</p>
+        <p className="mt-6 text-xs text-muted-foreground">Carregando...</p>
+      </div>
+    </main>
   );
 }
