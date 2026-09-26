@@ -1,0 +1,1 @@
+ALTER TABLE public.entries ADD COLUMN carrier text NOT NULL DEFAULT '';
