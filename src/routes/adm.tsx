@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { AppHeader } from "@/components/AppHeader";
 import {
   adminCreateAdmin,
+  adminCreateDeliverer,
   adminDeleteUser,
   adminOverview,
   adminResetPassword,
@@ -52,11 +53,13 @@ function AdmPage() {
   const resetFn = useServerFn(adminResetPassword);
   const deleteFn = useServerFn(adminDeleteUser);
   const createFn = useServerFn(adminCreateAdmin);
+  const createDelivererFn = useServerFn(adminCreateDeliverer);
 
   const [start, setStart] = useState(monthRange(0).start);
   const [end, setEnd] = useState(monthRange(0).end);
   const [openUser, setOpenUser] = useState<string | null>(null);
   const [newAdm, setNewAdm] = useState({ name: "", email: "", password: "" });
+  const [newUser, setNewUser] = useState({ name: "", email: "", password: "" });
 
   useEffect(() => {
     if (loading) return;
@@ -96,6 +99,16 @@ function AdmPage() {
     onSuccess: () => {
       toast.success("Novo ADM criado.");
       setNewAdm({ name: "", email: "", password: "" });
+      void queryClient.invalidateQueries({ queryKey: ["admin-overview"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const createUser = useMutation({
+    mutationFn: () => createDelivererFn({ data: newUser }),
+    onSuccess: () => {
+      toast.success("Entregador criado.");
+      setNewUser({ name: "", email: "", password: "" });
       void queryClient.invalidateQueries({ queryKey: ["admin-overview"] });
     },
     onError: (e: Error) => toast.error(e.message),
@@ -298,6 +311,43 @@ function AdmPage() {
           {!overview.isLoading && deliverers.length === 0 ? (
             <p className="text-xs text-muted-foreground">Nenhum entregador cadastrado ainda.</p>
           ) : null}
+        </div>
+
+        <div className="mt-4 rounded-2xl border border-border bg-black/20 p-3">
+          <p className="font-display text-sm font-bold">Cadastrar entregador</p>
+          <div className="mt-2 grid gap-2">
+            <input
+              className="glass-input"
+              placeholder="Nome"
+              maxLength={80}
+              value={newUser.name}
+              onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+            />
+            <input
+              className="glass-input"
+              type="email"
+              placeholder="E-mail"
+              maxLength={255}
+              value={newUser.email}
+              onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+            />
+            <input
+              className="glass-input"
+              type="password"
+              placeholder="Senha (mínimo 6)"
+              maxLength={72}
+              value={newUser.password}
+              onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+            />
+            <button
+              type="button"
+              disabled={createUser.isPending}
+              onClick={() => createUser.mutate()}
+              className="gradient-primary inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-xs font-bold uppercase text-primary-foreground disabled:opacity-60"
+            >
+              <UserPlus className="size-4" /> Cadastrar entregador
+            </button>
+          </div>
         </div>
       </section>
 

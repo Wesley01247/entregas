@@ -38,6 +38,7 @@ export type AdminUserRow = {
     maintenance: number;
     other_expenses: number;
     notes: string;
+    carrier: string;
   }>;
   allTime: { deliveries: number; value: number };
 };
@@ -59,7 +60,7 @@ export const adminOverview = createServerFn({ method: "POST" })
     const { data: entries, error: eErr } = await context.supabase
       .from("entries")
       .select(
-        "id, user_id, day, deliveries, price, extra_income, fuel, maintenance, other_expenses, notes",
+        "id, user_id, day, deliveries, price, extra_income, fuel, maintenance, other_expenses, notes, carrier",
       )
       .order("day", { ascending: false });
     if (eErr) throw new Error(eErr.message);
@@ -133,6 +134,31 @@ export const adminDeleteUser = createServerFn({ method: "POST" })
     }
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin.auth.admin.deleteUser(data.userId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const adminCreateDeliverer = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) =>
+    z
+      .object({
+        name: z.string().trim().min(2).max(80),
+        email: z.string().trim().email().max(255),
+        password: z.string().min(6).max(72),
+      })
+      .parse(data),
+  )
+  .handler(async ({ data, context }) => {
+    const roles = await getRoles(context.supabase, context.userId);
+    assertAdmin(roles);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.auth.admin.createUser({
+      email: data.email.toLowerCase(),
+      password: data.password,
+      email_confirm: true,
+      user_metadata: { name: data.name, role: "entregador" },
+    });
     if (error) throw new Error(error.message);
     return { ok: true };
   });
