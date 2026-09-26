@@ -312,6 +312,43 @@ function AdmPage() {
             <p className="text-xs text-muted-foreground">Nenhum entregador cadastrado ainda.</p>
           ) : null}
         </div>
+
+        <div className="mt-4 rounded-2xl border border-border bg-black/20 p-3">
+          <p className="font-display text-sm font-bold">Cadastrar entregador</p>
+          <div className="mt-2 grid gap-2">
+            <input
+              className="glass-input"
+              placeholder="Nome"
+              maxLength={80}
+              value={newUser.name}
+              onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+            />
+            <input
+              className="glass-input"
+              type="email"
+              placeholder="E-mail"
+              maxLength={255}
+              value={newUser.email}
+              onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+            />
+            <input
+              className="glass-input"
+              type="password"
+              placeholder="Senha (mínimo 6)"
+              maxLength={72}
+              value={newUser.password}
+              onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+            />
+            <button
+              type="button"
+              disabled={createUser.isPending}
+              onClick={() => createUser.mutate()}
+              className="gradient-primary inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-xs font-bold uppercase text-primary-foreground disabled:opacity-60"
+            >
+              <UserPlus className="size-4" /> Cadastrar entregador
+            </button>
+          </div>
+        </div>
       </section>
 
       <section className="glass-card p-4">
