@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { AppHeader } from "@/components/AppHeader";
 import {
   adminCreateAdmin,
+  adminCreateDeliverer,
   adminDeleteUser,
   adminOverview,
   adminResetPassword,
@@ -52,11 +53,13 @@ function AdmPage() {
   const resetFn = useServerFn(adminResetPassword);
   const deleteFn = useServerFn(adminDeleteUser);
   const createFn = useServerFn(adminCreateAdmin);
+  const createDelivererFn = useServerFn(adminCreateDeliverer);
 
   const [start, setStart] = useState(monthRange(0).start);
   const [end, setEnd] = useState(monthRange(0).end);
   const [openUser, setOpenUser] = useState<string | null>(null);
   const [newAdm, setNewAdm] = useState({ name: "", email: "", password: "" });
+  const [newUser, setNewUser] = useState({ name: "", email: "", password: "" });
 
   useEffect(() => {
     if (loading) return;
@@ -96,6 +99,16 @@ function AdmPage() {
     onSuccess: () => {
       toast.success("Novo ADM criado.");
       setNewAdm({ name: "", email: "", password: "" });
+      void queryClient.invalidateQueries({ queryKey: ["admin-overview"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const createUser = useMutation({
+    mutationFn: () => createDelivererFn({ data: newUser }),
+    onSuccess: () => {
+      toast.success("Entregador criado.");
+      setNewUser({ name: "", email: "", password: "" });
       void queryClient.invalidateQueries({ queryKey: ["admin-overview"] });
     },
     onError: (e: Error) => toast.error(e.message),
