@@ -266,6 +266,23 @@ function AdmPage() {
                           {brl(group.totals.deliveriesValue)} · despesas{" "}
                           {brl(group.totals.expenses)}
                         </p>
+                        <ul className="mt-1 space-y-0.5">
+                          {group.entries.map((e) => (
+                            <li key={e.id} className="flex justify-between gap-2">
+                              <span>
+                                {e.carrier ? (
+                                  <b className="text-accent">{e.carrier}</b>
+                                ) : (
+                                  <span className="text-muted-foreground">Sem transportadora</span>
+                                )}{" "}
+                                · {e.deliveries}× {brl(e.price)}
+                              </span>
+                              {e.notes ? (
+                                <span className="truncate text-muted-foreground">{e.notes}</span>
+                              ) : null}
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     ))}
                     {row.periodEntries.length === 0 ? (
