@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       entries: {
         Row: {
+          carrier: string
           created_at: string
           day: string
           deliveries: number
@@ -29,6 +30,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          carrier?: string
           created_at?: string
           day?: string
           deliveries?: number
@@ -42,6 +44,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          carrier?: string
           created_at?: string
           day?: string
           deliveries?: number

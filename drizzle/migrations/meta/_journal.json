@@ -8,6 +8,13 @@
       "when": 1790343202189,
       "tag": "0000_create_entregador_schema",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790431677497,
+      "tag": "0001_add_carrier_to_entries",
+      "breakpoints": true
     }
   ]
 }

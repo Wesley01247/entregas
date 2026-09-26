@@ -101,7 +101,17 @@ export function buildReportPdf({ title, personName, start, end, entries }: Repor
     doc.text(brl(row.totals.fuel), cols[4]!, y);
     doc.text(brl(row.totals.expenses), cols[5]!, y);
     doc.text(brlSigned(row.totals.result), cols[7]!, y, { align: "right" });
-    y += 15;
+    y += 12;
+    const carriers = [...new Set(row.entries.map((e) => e.carrier).filter(Boolean))];
+    if (carriers.length > 0) {
+      doc.setFontSize(8);
+      doc.setTextColor(120);
+      doc.text(`Transportadoras: ${carriers.join(", ")}`, cols[0]!, y);
+      doc.setFontSize(10);
+      doc.setTextColor(0);
+      y += 12;
+    }
+    y += 3;
   }
 
   if (entries.length === 0) {

@@ -9,8 +9,11 @@ export type Entry = {
   maintenance: number;
   other_expenses: number;
   notes: string;
+  carrier: string;
   created_at: string;
 };
+
+export const CARRIERS = ["J&T Express", "Shopee", "iMile", "Anjun", "Flash", "Total"] as const;
 
 export type Totals = {
   deliveries: number;
