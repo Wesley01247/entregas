@@ -18,6 +18,7 @@ import {
   todayISO,
   weekRange,
   type Entry,
+  CARRIERS,
 } from "@/lib/finance";
 import { downloadReportPdf } from "@/lib/pdf";
 
@@ -42,6 +43,7 @@ export const Route = createFileRoute("/painel")({
 
 type FormState = {
   day: string;
+  carrier: string;
   deliveries: string;
   price: string;
   extra_income: string;
@@ -53,6 +55,7 @@ type FormState = {
 
 const emptyForm = (): FormState => ({
   day: todayISO(),
+  carrier: "",
   deliveries: "",
   price: "",
   extra_income: "",
@@ -137,6 +140,7 @@ function PainelPage() {
       if (!user) throw new Error("Sessão expirada");
       const payload = {
         day: form.day || todayISO(),
+        carrier: form.carrier,
         deliveries: Math.max(0, Math.trunc(num(form.deliveries))),
         price: num(form.price),
         extra_income: num(form.extra_income),
@@ -145,6 +149,9 @@ function PainelPage() {
         other_expenses: num(form.other_expenses),
         notes: form.notes.slice(0, 500),
       };
+      if (!payload.carrier) {
+        throw new Error("Escolha a transportadora do lançamento.");
+      }
       if (
         payload.deliveries === 0 &&
         payload.extra_income === 0 &&
@@ -323,6 +330,23 @@ function PainelPage() {
 
         <div className="mt-4 grid grid-cols-2 gap-3">
           {field("day", "Data", { type: "date" })}
+          <label className="block">
+            <span className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+              Transportadora
+            </span>
+            <select
+              className="glass-input"
+              value={form.carrier}
+              onChange={(e) => setForm({ ...form, carrier: e.target.value })}
+            >
+              <option value="">Selecione...</option>
+              {CARRIERS.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
+          </label>
           {field("deliveries", "Quantidade de entregas", {
             type: "number",
             min: 0,
@@ -485,6 +509,9 @@ function PainelPage() {
                     className="flex items-start justify-between gap-2 rounded-xl bg-black/25 px-3 py-2 text-xs"
                   >
                     <div>
+                      {entry.carrier ? (
+                        <p className="mb-0.5 font-semibold text-primary">{entry.carrier}</p>
+                      ) : null}
                       <p>
                         {entry.deliveries} entregas × {brl(Number(entry.price))} ={" "}
                         <b>{brl(Number(entry.deliveries) * Number(entry.price))}</b>
@@ -505,6 +532,7 @@ function PainelPage() {
                           setEditing(entry);
                           setForm({
                             day: entry.day,
+                            carrier: entry.carrier ?? "",
                             deliveries: String(entry.deliveries),
                             price: String(entry.price),
                             extra_income: String(entry.extra_income),
